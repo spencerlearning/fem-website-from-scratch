@@ -153,12 +153,8 @@
     --border-radius-3: 0.75rem;
   }
 
-  html {
-    font-family: var(--ff-body);
-    line-height: 1.6;
-  }
-
   body {
+    font-family: var(--ff-body);
     font-size: var(--font-size-regular);
     color: var(--text-main);
     background-color: var(--background-main);
@@ -169,12 +165,8 @@
   h3,
   h4 {
     font-family: var(--ff-heading);
-    /* font-weight: 700; */
+    font-weight: 700;
     color: var(--text-high-contrast);
-  }
-
-  h1 {
-    font-size: var(--font-size-heading-lg);
   }
 
   a {
@@ -192,6 +184,19 @@
 }
 
 @layer layout {
+  /* Note the em instead of rem */
+  .flow > * + * {
+    margin-block-start: var(--flow-space, 1em);
+  }
+
+  .grid-flow {
+    display: grid;
+    gap: var(--grid-flow-space, 1rem);
+
+    align-content: start;
+    justify-items: start;
+  }
+
   .wrapper {
     --wrapper-max-width: 1130px;
     --wrapper-padding: 1rem;
@@ -210,18 +215,17 @@
     --wrapper-max-width: 1330px;
   }
 
-  /* Note the em instead of rem */
-  .flow > * + * {
-    margin-block-start: var(--flow-space, 1em);
+  .section {
+    --padding: 3.75rem;
+    padding-block: var(--padding);
   }
-
-  .grid-flow {
-    display: grid;
-    gap: var(--grid-flow-space, 1rem);
-
-    align-content: var(--grid-flow-alignment, start);
-    /* Not sure why the justify-items */
-    justify-items: var(--grid-flow-justification, start);
+  @media (min-width: 760px) {
+    .section {
+      --padding: 8rem;
+    }
+    .section[data-padding="compact"] {
+      --padding: 4.5rem;
+    }
   }
 
   .equal-columns {
@@ -234,8 +238,12 @@
     --equal-columns-gap: 2rem;
   }
 
-  .equal-columns[data-alignment="center"] {
+  .equal-columns[data-vertical-alignment="center"] {
     --equal-columns-vertical-alignment: center;
+  }
+
+  .equal-columns[data-vertical-alignment="bottom"] {
+    --equal-columns-vertical-alignment: end;
   }
 
   @media (min-width: 760px) {
@@ -251,19 +259,6 @@
   .flex-equal-columns > * {
     flex: 1;
   } */
-
-  .section {
-    --padding: 3.75rem;
-    padding-block: var(--padding);
-  }
-  @media (min-width: 760px) {
-    .section {
-      --padding: 8rem;
-    }
-    .section[data-padding="compact"] {
-      --padding: 4.5rem;
-    }
-  }
 }
 
 @layer components {
@@ -280,9 +275,7 @@
   }
 
   .primary-navigation ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    /* role="list" should be added to nav ul to remove default list styling */
     display: flex;
     flex-wrap: wrap;
     gap: 1rem 1.5rem;
@@ -290,6 +283,25 @@
 
   .primary-navigation a {
     text-decoration: none;
+  }
+
+  @media (max-width: 760px) {
+    .primary-navigation {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      font-family: var(--ff-heading);
+      background-color: var(--background-accent-main);
+      padding: 2rem;
+      border-radius: 0 0 0 var(--border-radius-3);
+    }
+
+    .primary-navigation ul {
+      flex-direction: column;
+    }
   }
 
   .hero {
@@ -376,16 +388,6 @@
 }
 
 @layer utilities {
-  .visually-hidden {
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
-  }
-
   .text-center {
     text-align: center;
   }
@@ -431,5 +433,15 @@
   }
   .font-size-lg {
     font-size: var(--font-size-lg);
+  }
+
+  .visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
   }
 }
