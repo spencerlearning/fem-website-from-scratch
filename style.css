@@ -275,7 +275,10 @@
   }
 
   .primary-navigation ul {
-    /* role="list" should be added to nav ul to remove default list styling */
+    /* role="list" was added to nav ul to remove default list styling
+    list-style: none;
+    margin: 0;
+    padding: 0; */
     display: flex;
     flex-wrap: wrap;
     gap: 1rem 1.5rem;
@@ -285,9 +288,37 @@
     text-decoration: none;
   }
 
+  /* Hamburger menu button */
+  [aria-controls="primary-nav"] {
+    /* Hide menu hamburger button on wider screen size */
+    display: none;
+    /* Make sure nav menu button is on top of menu */
+    position: relative;
+    z-index: 100;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+  }
+  [aria-controls="primary-nav"] img {
+    border-radius: 0;
+  }
+
   @media (max-width: 760px) {
+    [aria-controls="primary-nav"] {
+      /* Show menu hamburger button on mobile screen size */
+      display: block;
+    }
+
+    /* .site-header {
+      position: relative;
+    } */
+
     .primary-navigation {
+      /* Initially hide the menu on mobile sizes */
+      display: none;
+
       position: absolute;
+      z-index: 10;
       top: 0;
       right: 0;
 
@@ -301,7 +332,33 @@
 
     .primary-navigation ul {
       flex-direction: column;
+      gap: 0;
     }
+
+    /* Draw lines between menu items using border-top */
+    .primary-navigation li + li {
+      margin-block-start: 1.5rem;
+      padding-block-start: 1.5rem;
+      border-top: 2px solid var(--background-accent-light);
+    }
+
+    /* Show the dropdown menu when [aria-expanded="true"] */
+    /* [aria-expanded="true"] ~ .primary-navigation */
+    [aria-expanded="true"] + .primary-navigation {
+      display: block;
+    }
+
+    /* Complicated way of drawing lines between menu items
+    .primary-navigation li {
+      margin-block-end: 1.5rem;
+    }
+    .primary-navigation li:not(:last-of-type)::after {
+      content: "";
+      display: block;
+      height: 2px;
+      background: var(--background-accent-light);
+      margin-block-end: inherit;
+    } */
   }
 
   .hero {
