@@ -184,19 +184,6 @@
 }
 
 @layer layout {
-  /* Note the em instead of rem */
-  .flow > * + * {
-    margin-block-start: var(--flow-space, 1em);
-  }
-
-  .grid-flow {
-    display: grid;
-    gap: var(--grid-flow-space, 1rem);
-
-    align-content: start;
-    justify-items: start;
-  }
-
   .wrapper {
     --wrapper-max-width: 1130px;
     --wrapper-padding: 1rem;
@@ -226,6 +213,45 @@
     .section[data-padding="compact"] {
       --padding: 4.5rem;
     }
+  }
+
+  .flex-group {
+    display: flex;
+    gap: var(--flex-group-space, 0.5rem);
+    flex-wrap: wrap;
+  }
+
+  .flow > * + * {
+    /* Note the em instead of rem */
+    margin-block-start: var(--flow-space, 1em);
+  }
+
+  .flex-flow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--flex-flow-space, 1rem);
+  }
+
+  .grid-flow {
+    display: grid;
+    gap: var(--grid-flow-space, 1rem);
+
+    align-content: start;
+    justify-items: start;
+
+    /* optional */
+    /* align-content: var(--grid-flow-alignment, start); */
+    /* justify-items: var(--grid-flow-justification, start); */
+  }
+
+  .grid-auto-fit {
+    /* --grid-auto-fit-min-column-size: 300px; */
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(var(--grid-auto-fit-min-column-size, 320px), 100%), 1fr)
+    );
   }
 
   .equal-columns {
@@ -402,9 +428,11 @@
   }
 
   .card {
-    display: grid;
-    gap: var(--grid-flow-space, 1rem);
-    align-content: start;
+    /* display: grid;
+    align-content: start; */
+    display: flex;
+    flex-direction: column;
+    gap: var(--card-gap, 1rem);
     padding: 1rem;
     background-color: var(--background-light);
     border-radius: var(--border-radius-3);
@@ -415,8 +443,65 @@
   }
 
   .card__title {
-    font-size: var(--card-title-font-size, var(--font-size-heading-sm));
     color: var(--card-title-color, var(--text-brand));
+    font-size: var(--card-title-font-size, var(--font-size-heading-sm));
+  }
+
+  .card__note {
+    background-color: var(--background-extra-light);
+    padding: 0.75rem;
+    margin-block-start: auto;
+    border-radius: var(--border-radius-2);
+  }
+
+  .mushroom-guide {
+    /* Set custom property for min column width */
+    --grid-auto-fit-min-column-size: 260px;
+    /* Set custom properties for card title font-size and color */
+    --card-title-color: var(--text-high-contrast);
+    --card-title-font-size: var(--font-size-lg);
+    /* Set custom property for card gap */
+    --card-gap: 0.75rem;
+  }
+
+  .tag-list {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag-list > li {
+    font-family: var(--ff-heading);
+    font-size: var(--font-size-sm);
+    color: var(--text-high-contrast);
+    /* This background color will be overwritten below */
+    background-color: var(--tag-background-color, red);
+    padding: 0.125rem 0.25rem;
+    border-radius: var(--border-radius-1);
+  }
+
+  .tag-list [data-edible="edible"] {
+    --tag-background-color: var(--background-accent-main);
+  }
+  .tag-list [data-edible="toxic"] {
+    --tag-background-color: var(--clr-red-500);
+  }
+  .tag-list [data-season="summer"] {
+    --tag-background-color: var(--background-accent-main);
+  }
+  .tag-list [data-season="spring"] {
+    --tag-background-color: var(--clr-teal-500);
+  }
+  .tag-list [data-season="fall"] {
+    --tag-background-color: var(--clr-orange-500);
+  }
+
+  select {
+    padding: 0.5rem 1rem;
+    background-color: var(--background-accent-main);
+    color: var(--text-high-contrast);
+    border: 0;
+    border-radius: var(--border-radius-2);
   }
 
   .button {
