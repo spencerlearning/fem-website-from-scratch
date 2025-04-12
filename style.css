@@ -81,9 +81,23 @@
     --clr-gray-100: hsl(0, 2%, 79%);
     --clr-brand-400: hsl(25, 88%, 75%);
     --clr-brand-500: hsl(25, 88%, 66%);
+
     --clr-green-400: hsl(143, 19%, 49%);
     --clr-green-500: hsl(143, 38%, 37%);
     --clr-green-600: hsl(145, 29%, 19%);
+
+    /* Light mode colors from KP notes */
+    /* --clr-brown-100: hsl(10, 5%, 92%);
+    --clr-brown-200: hsl(9, 7%, 85%);
+    --clr-brown-300: hsl(9, 8%, 78%);
+    --clr-brown-400: hsl(0, 6%, 72%); */
+
+    /* Light mode colors from KP video */
+    --clr-brown-100: hsl(10, 5%, 90%);
+    --clr-brown-200: hsl(9, 7%, 85%);
+    --clr-brown-300: hsl(9, 8%, 75%);
+    --clr-brown-400: hsl(0, 6%, 60%);
+
     --clr-brown-500: hsl(10, 5%, 25%);
     --clr-brown-600: hsl(9, 7%, 21%);
     --clr-brown-700: hsl(9, 8%, 16%);
@@ -120,7 +134,7 @@
     }
   }
 
-  /* Start a new :root to keep proper syntax highlighting */
+  /* Start a new :root to keep proper syntax highlighting in VS Code*/
   :root {
     /* SEMANTIC */
     --text-main: var(--clr-gray-100);
@@ -151,6 +165,39 @@
     --border-radius-1: 0.25rem;
     --border-radius-2: 0.5rem;
     --border-radius-3: 0.75rem;
+
+    /* Note media query is using CSS Nesting inside :root */
+    /* @media (prefers-color-scheme: light) {
+      --text-main: var(--clr-gray-700);
+      --text-high-contrast: var(--clr-brown-900);
+
+      --background-accent-light: var(--clr-green-600);
+      --background-accent-main: var(--clr-green-500);
+      --background-accent-dark: var(--clr-green-400);
+
+      --background-extra-light: var(--clr-brown-100);
+      --background-light: var(--clr-brown-200);
+      --background-main: var(--clr-brown-300);
+      --background-dark: var(--clr-brown-400);
+      --background-extra-dark: var(--clr-brown-500);
+    } */
+  }
+}
+
+@layer base {
+  /* Cross-document view transition (navigating between pages) */
+  @view-transition {
+    navigation: auto;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  html {
+    scroll-padding: 2rem;
   }
 
   body {
@@ -185,12 +232,12 @@
 
 @layer layout {
   .wrapper {
-    --wrapper-max-width: 1130px;
-    --wrapper-padding: 1rem;
+    /* --wrapper-max-width: 1130px; */
+    /* --wrapper-padding: 1rem; */
 
-    max-width: var(--wrapper-max-width);
+    max-inline-size: var(--wrapper-max-width, 1130px);
     margin-inline: auto;
-    padding-inline: var(--wrapper-padding);
+    padding-inline: var(--wrapper-padding, 1rem);
   }
 
   /* .wrapper--narrow */
@@ -215,12 +262,6 @@
     }
   }
 
-  .flex-group {
-    display: flex;
-    gap: var(--flex-group-space, 0.5rem);
-    flex-wrap: wrap;
-  }
-
   .flow > * + * {
     /* Note the em instead of rem */
     margin-block-start: var(--flow-space, 1em);
@@ -230,6 +271,12 @@
     display: flex;
     flex-direction: column;
     gap: var(--flex-flow-space, 1rem);
+  }
+
+  .flex-group {
+    display: flex;
+    gap: var(--flex-group-space, 1rem);
+    flex-wrap: wrap;
   }
 
   .grid-flow {
@@ -245,12 +292,20 @@
   }
 
   .grid-auto-fit {
-    /* --grid-auto-fit-min-column-size: 300px; */
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(
       auto-fit,
       minmax(min(var(--grid-auto-fit-min-column-size, 320px), 100%), 1fr)
+    );
+  }
+
+  .grid-auto-fill {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(var(--grid-auto-fill-min-column-size, 320px), 100%), 1fr)
     );
   }
 
@@ -267,7 +322,6 @@
   .equal-columns[data-vertical-alignment="center"] {
     --equal-columns-vertical-alignment: center;
   }
-
   .equal-columns[data-vertical-alignment="bottom"] {
     --equal-columns-vertical-alignment: end;
   }
@@ -308,8 +362,13 @@
     width: 1px;
   }
 
+  /* HEADER AND NAVIGATION */
   .site-header {
     padding-block: 1rem;
+
+    /* Prevent overflow scrolling during menu transition */
+    overflow-x: clip;
+    position: relative;
   }
 
   .site-header__inner {
@@ -350,6 +409,7 @@
   }
 
   @media (max-width: 760px) {
+    /* Hamburger menu button */
     [aria-controls="primary-nav"] {
       /* Show menu hamburger button on mobile screen size */
       display: block;
@@ -362,6 +422,19 @@
     .primary-navigation {
       /* Initially hide the menu on mobile sizes */
       display: none;
+
+      /* Transition animation */
+      opacity: 0;
+      /*
+      transition: opacity 1s, display 1s; 
+      transition-behavior: allow-discrete; 
+      */
+
+      /* Add slide-up animation on close */
+      transition: opacity 1s, display 1s, translate 0.5s;
+      transition-behavior: allow-discrete;
+      /* Slide off screen to right */
+      translate: 100% 0;
 
       position: absolute;
       z-index: 10;
@@ -392,6 +465,16 @@
     /* [aria-expanded="true"] ~ .primary-navigation */
     [aria-expanded="true"] + .primary-navigation {
       display: block;
+      /* Add opacity: 1 for animation end */
+      opacity: 1;
+
+      translate: 0 0;
+
+      @starting-style {
+        opacity: 0;
+        /* Slide on-screen from right */
+        translate: 100% 0;
+      }
     }
 
     /* Complicated way of drawing lines between menu items
@@ -407,6 +490,7 @@
     } */
   }
 
+  /* HERO */
   .hero {
     text-align: center;
     font-size: var(--font-size-md);
@@ -414,6 +498,12 @@
     background-image: url(/assets/hero.webp);
     background-size: cover;
     background-position: center;
+
+    /* Scroll-driven animation fades out hero as it scrolls off screen */
+    /* Uses @keyframes fade-out which is defined later in the CSS */
+    animation: fade-out forwards;
+    animation-timeline: view();
+    animation-range-start: exit;
   }
 
   .hero__title {
@@ -427,6 +517,7 @@
     color: var(--text-brand);
   }
 
+  /* CARD */
   .card {
     /* display: grid;
     align-content: start; */
@@ -448,62 +539,13 @@
   }
 
   .card__note {
+    margin-block-start: auto;
     background-color: var(--background-extra-light);
     padding: 0.75rem;
-    margin-block-start: auto;
     border-radius: var(--border-radius-2);
   }
 
-  .mushroom-guide {
-    /* Set custom property for min column width */
-    --grid-auto-fit-min-column-size: 260px;
-    /* Set custom properties for card title font-size and color */
-    --card-title-color: var(--text-high-contrast);
-    --card-title-font-size: var(--font-size-lg);
-    /* Set custom property for card gap */
-    --card-gap: 0.75rem;
-  }
-
-  .tag-list {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .tag-list > li {
-    font-family: var(--ff-heading);
-    font-size: var(--font-size-sm);
-    color: var(--text-high-contrast);
-    /* This background color will be overwritten below */
-    background-color: var(--tag-background-color, red);
-    padding: 0.125rem 0.25rem;
-    border-radius: var(--border-radius-1);
-  }
-
-  .tag-list [data-edible="edible"] {
-    --tag-background-color: var(--background-accent-main);
-  }
-  .tag-list [data-edible="toxic"] {
-    --tag-background-color: var(--clr-red-500);
-  }
-  .tag-list [data-season="summer"] {
-    --tag-background-color: var(--background-accent-main);
-  }
-  .tag-list [data-season="spring"] {
-    --tag-background-color: var(--clr-teal-500);
-  }
-  .tag-list [data-season="fall"] {
-    --tag-background-color: var(--clr-orange-500);
-  }
-
-  select {
-    padding: 0.5rem 1rem;
-    background-color: var(--background-accent-main);
-    color: var(--text-high-contrast);
-    border: 0;
-    border-radius: var(--border-radius-2);
-  }
-
+  /* BUTTON */
   .button {
     display: inline-flex;
     cursor: pointer;
@@ -522,6 +564,139 @@
     color: var(--text-high-contrast);
   }
 
+  /* MUSHROOM GUIDE */
+  .mushroom-guide {
+    /* Set custom property for min column width */
+    --grid-auto-fit-min-column-size: 260px;
+    --grid-auto-fill-min-column-size: 260px;
+    /* Set custom properties for card title font-size and color */
+    --card-title-color: var(--text-high-contrast);
+    --card-title-font-size: var(--font-size-lg);
+    /* Set custom property for card gap */
+    --card-gap: 0.75rem;
+  }
+
+  select {
+    font-family: var(--ff-heading);
+    background-color: var(--background-accent-main);
+    color: var(--text-high-contrast);
+    padding: 0.5rem 1rem;
+    border: 0;
+    border-radius: var(--border-radius-2);
+  }
+
+  .tag-list {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .tag-list > li {
+    padding: 0.125rem 0.5rem;
+    color: var(--text-high-contrast);
+    /* The background color will use custom properties defined below */
+    background-color: var(--tag-background-color, red);
+    font-family: var(--ff-heading);
+    font-size: var(--font-size-sm);
+    border-radius: var(--border-radius-1);
+  }
+
+  .tag-list [data-edible="edible"] {
+    --tag-background-color: var(--background-accent-main);
+  }
+  .tag-list [data-edible="toxic"] {
+    --tag-background-color: var(--clr-red-500);
+  }
+
+  .tag-list [data-season="summer"] {
+    --tag-background-color: var(--background-accent-main);
+  }
+  .tag-list [data-season="spring"] {
+    --tag-background-color: var(--clr-teal-500);
+  }
+  .tag-list [data-season="fall"] {
+    --tag-background-color: var(--clr-orange-500);
+  }
+
+  /* .mushroom-guide:has(#season [value="spring"]:checked)
+    .card:not(:has([data-season="spring"])) {
+    display: none;
+  } */
+
+  /* FAQ BENTO GRID */
+  .faq-bento-grid {
+    --card-title-color: var(--text-high-contrast);
+
+    display: grid;
+    gap: 1rem;
+    grid-template-areas:
+      "card-one"
+      "card-two"
+      "card-three"
+      "card-four";
+  }
+
+  .faq-bento-grid .card:nth-child(1) {
+    grid-area: card-one;
+  }
+  .faq-bento-grid .card:nth-child(2) {
+    grid-area: card-two;
+  }
+  .faq-bento-grid .card:nth-child(3) {
+    grid-area: card-three;
+  }
+  .faq-bento-grid .card:nth-child(4) {
+    grid-area: card-four;
+  }
+
+  .card > img {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (min-width: 600px) {
+    .faq-bento-grid {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "card-one   card-two"
+        "card-three card-four";
+    }
+
+    /* .faq-bento-grid .card:nth-child(even) > img {
+      order: 3;
+    } */
+  }
+
+  @media (min-width: 900px) {
+    .faq-bento-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-areas:
+        "card-one   card-two   card-four"
+        "card-three card-three card-four";
+    }
+
+    .faq-bento-grid .card > img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .faq-bento-grid .card:nth-child(2) img {
+      order: 1;
+    }
+
+    .faq-bento-grid .card:nth-child(3) {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .faq-bento-grid .card:nth-child(3) img {
+      grid-column: 1 / 2;
+      grid-row: 1 / 3;
+    }
+  }
+
+  /* FOOTER */
   .site-footer {
     background-color: var(--background-dark);
     padding-block: 2rem;
@@ -553,6 +728,11 @@
   .text-center {
     text-align: center;
   }
+  /* From a KP CodePen */
+  .text-center > * {
+    margin-inline: auto;
+  }
+
   .text-brand {
     color: var(--text-brand);
   }
@@ -597,6 +777,19 @@
     font-size: var(--font-size-lg);
   }
 
+  /* Used in mushroom guide filtering */
+  [hidden] {
+    display: none;
+  }
+
+  /* Disable transitions (used in nav menu) while resizing */
+  /* .resizing class is added to body by resizeObserver in main.js */
+  .resizing * {
+    transition: none !important;
+    /* animation: none !important; */
+    /* animation-play-state: paused; */
+  }
+
   .visually-hidden {
     clip: rect(0 0 0 0);
     clip-path: inset(50%);
@@ -605,5 +798,14 @@
     position: absolute;
     white-space: nowrap;
     width: 1px;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
