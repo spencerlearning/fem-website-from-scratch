@@ -649,7 +649,7 @@
     grid-area: card-four;
   }
 
-  .card > img {
+  .faq-bento-grid .card > img {
     height: 100%;
     object-fit: cover;
   }
